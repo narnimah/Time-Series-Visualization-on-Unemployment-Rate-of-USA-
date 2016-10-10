@@ -38,7 +38,7 @@ stroke: #333;
 }
 
 #states .active {
-  fill: orange;
+  fill: black;
 }
 
 #state-borders {
@@ -505,14 +505,12 @@ function allstates(element)
   if(element.checked)
   {
    
-    var arr1=["Alabama","Alaska","","Arizona","Arkansas","California","","Colorado","Connecticut","Delaware","","Florida","Georgia","","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts"
+    arr=["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts"
 ,"Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma"
-,"Oregon","Pennsylvania","","","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia",,"Washington","West Virginia","Wisconsin","Wyoming"];
-for(var i=0; i<arr1.length;i++)
-{
-arr[i]=arr1[i];
+,"Oregon","Pennsylvania","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia",,"Washington","West Virginia","Wisconsin","Wyoming"];
+
 displayGraph();
-}
+
 
 
  }
@@ -666,7 +664,7 @@ svg.append("text")
 function pumpfunc() {
 var rise=document.getElementById('riseper').value;
 rise=Number(rise);
-focus.selectAll(".line")
+svg.selectAll(".line")
 .attr("stroke-opacity", function (unRates) {
 var bigIncrease=false;
 for(var i=1; i<unRates.length; i++) {
@@ -685,7 +683,7 @@ return 0.1;
 function dropfunc() {
 var drop=document.getElementById('dropper').value;
 drop=Number(drop);
-focus.selectAll(".line")
+svg.selectAll(".line")
 .attr("stroke-opacity", function (unRates) {
 var bigDrop=false;
 for(var i=1; i<unRates.length; i++) {
