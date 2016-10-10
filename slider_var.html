@@ -185,7 +185,7 @@ svg.append("defs")
   .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
           
-  var color1=d3.scale.ordinal().range(["#48A36D",  "#56AE7C",  "#64B98C", "#72C39B", "#80CEAA", "#80CCB3", "#7FC9BD", "#7FC7C6", "#7EC4CF", "#7FBBCF", "#7FB1CF", "#80A8CE", "#809ECE", "#8897CE", "#8F90CD", "#9788CD", "#9E81CC", "#AA81C5", "#B681BE", "#C280B7", "#CE80B0", "#D3779F", "#D76D8F", "#DC647E", "#E05A6D", "#E16167", "#E26962", "#E2705C", "#E37756", "#E38457", "#E39158", "#E29D58", "#E2AA59", "#E0B15B", "#DFB95C", "#DDC05E", "#DBC75F", "#E3CF6D", "#EAD67C", "#F2DE8A","#C0C0C0","#808080","#FF0000","#800000","#FFFF00","#808000","#00FF00","#008000","#008080","#00FFFF","#0000FF","#000080","#FF00FF","#800080","#6495ED","#008B8B"]);     
+  var color1=d3.scale.ordinal().range(["#48A36D",  "#56AE7C",  "#64B98C", "#72C39B", "#80CEAA", "#80CCB3", "#7FC9BD", "#7FC7C6", "#7EC4CF", "#7FBACF", "#7FB1CF", "#80A8CE", "#809ECE", "#8897CE", "#8F90CD", "#9788CD", "#9E81BC", "#AA81C5", "#B681BE", "#C281B7", "#CE80B0", "#D3779F", "#D76D8F", "#DC647E", "#E05A6D", "#E16167", "#E26962", "#E2715C", "#E37753", "#E33457", "#E39158", "#E29D58", "#E2AA59", "#E0B15B", "#DFB95C", "#DDC05E", "#DBC75F", "#E3CF6D", "#EAD67C", "#F2DE8A","#C0C0C0","#808080","#FF0000","#800000","#FFFF00","#808000","#00FF00","#008000","#008080","#00FFFF","#0000FF","#000080","#FF00FF","#800080","#6495EC","#008B8B"]);     
 //get the data
 var dataAll={};
 
@@ -628,12 +628,12 @@ d3.csv("unemplyment.csv", function(error, data) {
 
   svg.selectAll(".line").append("title")
   .text(function(d) {
-  return d[0].State +" "+ d[0].Unemplyment;
+  return d[0].State;
   });
   
   svg.selectAll(".line1").append("title")
   .text(function(d) {
-  return d[0].State +" "+d[0].unemplyment;
+  return d[0].State;
   });
   
 
@@ -666,7 +666,7 @@ svg.append("text")
 function pumpfunc() {
 var rise=document.getElementById('riseper').value;
 rise=Number(rise);
-svg.selectAll(".line")
+focus.selectAll(".line")
 .attr("stroke-opacity", function (unRates) {
 var bigIncrease=false;
 for(var i=1; i<unRates.length; i++) {
@@ -685,7 +685,7 @@ return 0.1;
 function dropfunc() {
 var drop=document.getElementById('dropper').value;
 drop=Number(drop);
-svg.selectAll(".line")
+focus.selectAll(".line")
 .attr("stroke-opacity", function (unRates) {
 var bigDrop=false;
 for(var i=1; i<unRates.length; i++) {
