@@ -258,7 +258,7 @@
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
        var context = svg.append("g")
       .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
-       var grpcolor = d3.scale.category20();
+       var grpcolor = d3.scale.category10();
       var dataAll = {};
       d3.csv("unemplyment.csv", function(error, data) {
           data.forEach(function(d) {
@@ -341,7 +341,7 @@
       .attr("height", height1 + margin1.top1 + margin1.bottom1)
       .append("g")
       .attr("transform", "translate(" + margin1.left1 + "," + margin1.top1 + ")");
-      var grpcolor1 = d3.scale.category20();
+      var grpcolor1 = d3.scale.category20c();
       x1.domain(["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
       .rangePoints([0, width1]);
       y1.domain([0, 12]);
