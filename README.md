@@ -57,7 +57,8 @@ After clicking on ‘All States’ checkbox, in order to see which state had a d
 States with 03.00% drop
 ![ScreenShot](https://github.com/narnimah/time-series/blob/master/drop_2.PNG)
 
-
+COMPARISON OF UNEMPLOYMENT RATES OF DIFFERENT YEARS AND STATES
+![ScreenShot](https://github.com/narnimah/time-series/blob/master/comp_states_yrs.PNG)
 
 
 
