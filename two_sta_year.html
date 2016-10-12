@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
   <meta charset="utf-8">
   
   <style> 
@@ -7,7 +7,6 @@
       stroke-width: 2;
       fill: none;
     }
-
     .axis path,
     .axis line {
       fill: none;
@@ -15,14 +14,12 @@
       stroke-width: 1;
       shape-rendering: crispEdges;
     }
-
       .area {
         fill: steelblue;
         clip-path: url(#clip);
       }
       #compareUnemp{
         align : float-right;
-
       }
      
       .y.axis path {
@@ -178,7 +175,6 @@
                 dataArray.push(dataAll[statename]);
             });
           }
-
           focus.selectAll(".line")
           .data(dataArray)
           .enter()
@@ -221,7 +217,6 @@
                     .attr("stroke-width", 15);
                   });
         }
-
       // Set the dimensions of the graph
       var margin = {top: 10, right: 10, bottom: 100, left: 40},
       margin2 = {top: 430, right: 10, bottom: 20, left: 40},
@@ -286,17 +281,51 @@
             })
           }
           
-         
+                   x.domain(d3.extent(dataAll["Illinois"], function(d) { return d.date; }));
+          y.domain([0, 20]);
+          x2.domain(x.domain());
+          y2.domain(y.domain());
+          /*var dataArray = [];
+          for(var statename in dataAll){
+              dataArray.push(dataAll[statename]);
+            } */
+          // Add the X Axis
+          focus.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis)
+          .append("text")
+          //.attr("transform", "rotate(-90)")
+          .attr("y", 40)
+          .attr("x", 450)
+          //.attr("dy", "0.71em")
+          .attr("fill", "#000")
+          .text("Date");
+          focus.append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+          .append("text")
+          //.attr("transform", "rotate(-90)")
+          .attr("y", 2)
+          .attr("dy", "0.71em")
+          .attr("fill", "#000")
+          .text("Unemployment_Rate");
+          context.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height2 + ")")
+          .call(xAxis2);
+          context.append("g")
+          .attr("class", "x brush")
+          .call(brush)
+          .selectAll("rect")
+          .attr("y", -6)
+          .attr("height", height2 + 7);
         });
     
-
       var margin1 = {top1: 20, right1: 10, bottom1: 100, left1: 40};
-
       var width1 = 1000 - margin1.left1 - margin1.right1;
       var height1 = 500 - margin1.top1 - margin1.bottom1;
-
       var x1 = d3.scale.ordinal().rangeRoundBands([0, width1]);
-
       var y1 = d3.scale.linear().range([height1, 0]);
       
       var xAxis1 = d3.svg.axis().scale(x1).orient("bottom").ticks(12);
@@ -306,7 +335,6 @@
       var valueline1 = d3.svg.line()
       .x(function(d) { return x1(d.Month); })
       .y(function(d) { return y1(d.unemplyment); });
-
       var focus1 = d3.select("#compareUnemp")
       .append("svg")
       .attr("width", width1 + margin1.left1+ margin1.right1)
@@ -327,7 +355,6 @@
           .attr("x", 450)
           .attr("fill", "#000")
           .text("Months");
-
     // Add the Y Axis
     focus1.append("g")
         .attr("class", "y axis")
@@ -341,22 +368,18 @@
       var state = compareState.value;
       var date = compareYears.value;
       var values = dataAll[state];
-
       var selectedItems = [];
       selectedItems.push(values.filter(o => o.Year == date));
-
       focus1
        .append("path")
        .data(selectedItems)
        .attr("class", "line")
        .attr("stroke-width",2)
        .attr("stroke",function(d){
-
          return grpcolor(state);
        })
        .attr("d", function(d){
             return valueline1(d);
-
         });
         focus1.selectAll(".line").append("title")
             .text(function (d) {
@@ -364,7 +387,6 @@
             });
      }
         
-
     </script>
 
     
