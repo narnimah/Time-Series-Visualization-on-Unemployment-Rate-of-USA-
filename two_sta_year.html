@@ -1,13 +1,12 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
   <meta charset="utf-8">
   
-  <style> 
+  <style> /* set the CSS */
     body { font: 12px Arial;}
     path {
-      stroke-width: 2;
+      stroke-width: 1;
       fill: none;
     }
-
     .axis path,
     .axis line {
       fill: none;
@@ -15,22 +14,60 @@
       stroke-width: 1;
       shape-rendering: crispEdges;
     }
-
+    .legend rect {
+      fill:white;
+      stroke:black;
+      opacity:0.8;}
       .area {
         fill: steelblue;
         clip-path: url(#clip);
       }
-      #compareUnemp{
-        align : float-right;
-
+      .zoom {
+        cursor: move;
+        fill: none;
+        pointer-events: all;
       }
-     
+      .states {
+        fill: none;
+        stroke: #fff;
+        stroke-linejoin: round;
+      }
+      .states-choropleth {
+        fill: #ccc;
+      }
+      #tooltip-container {
+        position: absolute;
+        background-color: #fff;
+        color: #000;
+        padding: 10px;
+        border: 1px solid;
+        display: none;
+      }
+      .tooltip_key {
+        font-weight: bold;
+      }
+      .tooltip_value {
+        margin-left: 20px;
+        float: right;
+      }
+      #chart {
+        width: 75%;
+        float: left;
+      }
+      #canvas-svg {
+        width: 20%;
+        float: left;
+      }
       .y.axis path {
         fill: none;
         stroke: #000;
         shape-rendering: crispEdges;
       }
-     
+      .brush .extent {
+        stroke: #fff;
+        fill-opacity: .125;
+        shape-rendering: crispEdges;
+      }
       .line {
         fill: none;
       }
@@ -40,21 +77,41 @@
       .compareFields > * {
         display: inline-block;
       }
-      .panel {
-        padd
-        ing: 40px;
+      .box {
+        padding: 40px;
       }
-      .compWidth {
+      .fullWidth {
         width: 100%;
       }
     </style>
-    <body bgcolor="#E6E6FA">
+    <body>
 
-   <h2><center>COMPARISON OF UNEMPLOYMENT RATES OF  DIFFERENT YEARS AND STATES</center></h2>
+     <!--<iframe width="560" height="315" src="https://www.youtube.com/embed/sBUrL3tOuOg" frameborder="0" allowfullscreen></iframe>-->
+    
+    <center>
+    <font style="font-family:Helvetica;" color="black" size="4"> 
+    Unemployment Rate Graph of US States from 1976 to 2016
+    </font>
+   
 
+      <div style="height: 500px">
 
-      <div class="compWidth panel">
-        <div class="compareFields compWidth">
+        <div id="chart"></div>
+
+        <div id="canvas-svg"></div>
+         <button onclick="displayState('National')">National Unemployment Rate</button> 
+    </center>
+        <!--button for national unemployment>
+        <div id = "option">
+        <input name ="updateButton"
+               type ="button"
+               value = "National Unemployment Rate"
+               onclick = "displayState(National)" /> 
+        </div>
+        button ends here-->
+
+      <div class="fullWidth box">
+        <div class="compareFields fullWidth">
           <select id="compareState">
             <option value="Alabama">Alabama</option>
             <option value="Alaska">Alaska</option>
@@ -106,9 +163,12 @@
             <option value="West Virginia">West Virginia</option>
             <option value="Wisconsin">Wisconsin</option>
             <option value="Wyoming">Wyoming</option>
+            <option value="National">National</option>
           </select>
 
-          <select id="compareYears">
+          <select id="compareDate">
+            <option value=1976>1976</option>
+            <option value=1977>1977</option>
             <option value=1978>1978</option>
             <option value=1979>1979</option>
             <option value=1980>1980</option>
@@ -149,15 +209,18 @@
             <option value=2015>2015</option>
             <option value=2016>2016</option>
           </select>
-          <button id="display" onclick="onDisplay()">Display</button>
+          <button id="compareButton" onclick="onCompareButton()">Compare</button>
         </div>
-        <div id="compareUnemp">
+        <div id="compareGraphs">
 
         </div>
       </div>
+
+      <!-- load the d3.js library -->
       <script src="http://d3js.org/d3.v3.min.js"></script>
       <script src="http://cdnjs.cloudflare.com/ajax/libs/topojson/1.1.0/topojson.min.js"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+      <!--<button onclick="myFunction()">Click me</button> -->
       <script>
         
         function brush() {
@@ -178,7 +241,8 @@
                 dataArray.push(dataAll[statename]);
             });
           }
-
+          // console.log(dataArray);
+          //console.log(dataArray);
           focus.selectAll(".line")
           .data(dataArray)
           .enter()
@@ -187,17 +251,21 @@
           .attr("stroke-width",5)
           .attr("id","displayline")
           .attr("stroke", function (d) {
-            return grpcolor(d[0].State);
+            return gcolor(d[0].State);
           })
           .attr("d", function(d){
             return valueline(d);
           })
           .attr("clip-path", "url(#clip)")
           .on('mouseover', function (e) {
+            //console.log(e);
+            //console.log(d3.select("#statePath-" + e.name));
             d3.select("#statePath-" + e[0].State).style('fill-opacity', 0.1);
+            //statePathMap[e.name].style('fill-opacity', 0.1);
           })
           .on('mouseout', function(e) {
             d3.select("#statePath-" + e[0].State).style('fill-opacity', 1);
+            //statePathMap[e.name].style('fill-opacity', 1);
             focus.selectAll(".line").append("title")
             .text(function (d) {
               return d[0].State;
@@ -210,19 +278,42 @@
           .attr("class", "line")
           .attr("stroke-width",5)
           .attr("stroke", function (d) {
-            return grpcolor(d[0].State);
+            return gcolor(d[0].State);
           })
           .attr("d", function(d){
             return valueline2(d);
           })
           .attr("clip-path", "url(#clip)")
           .on("mouseover", function (d) {
+                    //console.log(d[0].State);
                     svg.selectAll(".line")
                     .attr("stroke-width", 15);
+                    //map_svg.selectAll
                   });
         }
-
-      // Set the dimensions of the graph
+        //function to display national unemployment rate
+        function National(){
+           
+        }
+        //sudden drop or pump display.
+        function myFunction(){
+          //console.log("Happy!");
+          svg.selectAll(".line")
+          .attr("stroke-opacity",function(unRates){
+            
+            var bigIncrease = false;
+            for(var i=1; i<unRates.length;i++){
+              console.log(unRates[i].unemplyment);
+               if(unRates[i].unemplyment-unRates[i-1].unemplyment>4)
+                    bigIncrease=true;
+            }
+            if(bigIncrease)
+              return 1;
+            else
+              return 0.1;
+          });
+        }
+      // Set the dimensions of the canvas / graph
       var margin = {top: 10, right: 10, bottom: 100, left: 40},
       margin2 = {top: 430, right: 10, bottom: 20, left: 40},
       width = 960 - margin.left - margin.right,
@@ -248,7 +339,7 @@
       var valueline2 = d3.svg.line()
       .x(function(d) { return x2(d.date); })
       .y(function(d) { return y2(d.unemplyment); });
-      // Adds the svg 
+      // Adds the svg canvas
       var svg = d3.select("#chart")
       .append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -263,18 +354,21 @@
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
        var context = svg.append("g")
       .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
-       var grpcolor = d3.scale.category20();
+       var gcolor = d3.scale.category20();
       var dataAll = {};
-      d3.csv("unemplyment.csv", function(error, data) {
+      d3.csv("new_unemployment.csv", function(error, data) {
+          //dataTX = [];
           data.forEach(function(d) {
             if (dataAll[d.State]== undefined)
               dataAll[d.State] = [];
             dataAll[d.State].push(d);
           });
+          //console.log(dataAll);
           for(var statename in dataAll){
             dataAll[statename].forEach(function(d) {
               d.date = parseDate2(d.Month+"-"+d.Year);
-              d.unemplyment = +d["Unemployment rates by State, not seasonally adjusted"];
+              d.unemplyment = +d["Unemployment_Rate"];
+                  //    dataTX.push(d);
                 });
             dataAll[statename].sort(function(a,b){
               if (a.date<b.date)
@@ -286,17 +380,64 @@
             })
           }
           
-         
+          // Scale the range of the data
+          x.domain(d3.extent(dataAll["Illinois"], function(d) { return d.date; }));
+          y.domain([0, 20]);
+          x2.domain(x.domain());
+          y2.domain(y.domain());
+          /*var dataArray = [];
+          for(var statename in dataAll){
+              dataArray.push(dataAll[statename]);
+            } */
+          // Add the X Axis
+          focus.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis)
+          .append("text")
+          //.attr("transform", "rotate(-90)")
+          .attr("y", 40)
+          .attr("x", 450)
+          //.attr("dy", "0.71em")
+          .attr("fill", "#000")
+          .text("Date");
+          focus.append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+          .append("text")
+          //.attr("transform", "rotate(-90)")
+          .attr("y", 2)
+          .attr("dy", "0.71em")
+          .attr("fill", "#000")
+          .text("Unemployment_Rate");
+          context.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height2 + ")")
+          .call(xAxis2);
+          context.append("g")
+          .attr("class", "x brush")
+          .call(brush)
+          .selectAll("rect")
+          .attr("y", -6)
+          .attr("height", height2 + 7);
         });
     
-
-      var margin1 = {top1: 20, right1: 10, bottom1: 100, left1: 40};
-
-      var width1 = 1000 - margin1.left1 - margin1.right1;
+      //console.log(dataAll);
+      //var months = d3.entries(dataAll);
+      //console.log(months);
+      // var national_unemployment = d3.keys(data[0]).filter(function(key) { return key !== "date"; })
+      // -------------=======================
+      // This is the compare chart
+      var margin1 = {top1: 10, right1: 10, bottom1: 100, left1: 40};
+      //margin2 = {top: 430, right: 10, bottom: 20, left: 40},
+      var width1 = 960 - margin1.left1 - margin1.right1;
       var height1 = 500 - margin1.top1 - margin1.bottom1;
-
+      //height2 = 500 - margin2.top - margin2.bottom;
+      // Parse the date / time
+      //var parseDate3 = d3.time.format("%B-%Y").parse();
+      // Set the ranges
       var x1 = d3.scale.ordinal().rangeRoundBands([0, width1]);
-
+      //var x1 = d3.scale.linear().range([0, width1]);
       var y1 = d3.scale.linear().range([height1, 0]);
       
       var xAxis1 = d3.svg.axis().scale(x1).orient("bottom").ticks(12);
@@ -304,68 +445,164 @@
       var yAxis1 = d3.svg.axis().scale(y1).orient("left").ticks(10);
       // Define the line
       var valueline1 = d3.svg.line()
-      .x(function(d) { return x1(d.Month); })
+      .x(function(d) { return x1(d.Month); }) //var mnt = d.Month.substring(0,3); console.log(mnt); return x(mnt); })
       .y(function(d) { return y1(d.unemplyment); });
-
-      var focus1 = d3.select("#compareUnemp")
+      // Adds the svg canvas
+      var svg1 = d3.select("#compareGraphs")
       .append("svg")
       .attr("width", width1 + margin1.left1+ margin1.right1)
       .attr("height", height1 + margin1.top1 + margin1.bottom1)
       .append("g")
       .attr("transform", "translate(" + margin1.left1 + "," + margin1.top1 + ")");
-      var grpcolor1 = d3.scale.category20();
+      var gcolor1 = d3.scale.category20();
+      //x1.domain([1, 12]); //"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]);
       x1.domain(["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
       .rangePoints([0, width1]);
       y1.domain([0, 12]);
       // Add the X Axis
-    focus1.append("g")
+    svg1.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height1 + ")")
         .call(xAxis1)
         .append("text")
+          //.attr("transform", "rotate(-90)")
           .attr("y", 40)
           .attr("x", 450)
+          //.attr("dy", "0.71em")
           .attr("fill", "#000")
-          .text("Months");
-
+          .text("Date");
     // Add the Y Axis
-    focus1.append("g")
+    svg1.append("g")
         .attr("class", "y axis")
         .call(yAxis1)
         .append("text")
+          //.attr("transform", "rotate(-90)")
           .attr("y", 2)
           .attr("dy", "0.71em")
           .attr("fill", "#000")
-          .text("Unemployment Rate in %");
-    function onDisplay() {
+          .text("Unemployment_Rate");
+    function onCompareButton() {
       var state = compareState.value;
-      var date = compareYears.value;
+      var date = compareDate.value;
       var values = dataAll[state];
-
-      var selectedItems = [];
-      selectedItems.push(values.filter(o => o.Year == date));
-
-      focus1
+      //console.log(values.length);
+      //console.log(values);
+      //if (values.length == 0) {
+       // return;
+      //}
+      var filteredValues = [];
+      filteredValues.push(values.filter(o => o.Year == date));
+      //console.log(filteredValues);
+      // Add the line
+      svg1
+      // selectAll(".line")
+       // .data(filteredValues)
+       // .enter()
        .append("path")
-       .data(selectedItems)
+       .data(filteredValues)
        .attr("class", "line")
        .attr("stroke-width",2)
        .attr("stroke",function(d){
-
-         return grpcolor(state);
+        //debugger;
+        //console.log(d);
+         return gcolor(state);
        })
        .attr("d", function(d){
+             //console.log(d);
             return valueline1(d);
-
+            
+            //console.log(vl);
+            // return vl;
+       // });
         });
-        focus1.selectAll(".line").append("title")
+        svg1.selectAll(".line").append("title")
             .text(function (d) {
               console.log(d[0].Month);
             });
      }
         
-
+// makeCompareChart();
     </script>
-
+<!--compare chart ends here.-->
+    <script>
+      d3.csv("population.csv", function(err, data) {
+        var config = {"color1":"#d3e5ff","color2":"#08306B","stateDataColumn":"state_or_territory","valueDataColumn":"population_estimate_for_july_1_2013_number"}
+        var WIDTH = 350, HEIGHT = 200;
+        var COLOR_COUNTS = 20;
+        var SCALE = 0.35;
+        function valueFormat(d) {
+          if (d > 1000000000) {
+            return Math.round(d / 1000000000 * 10) / 10 + "B";
+          } else if (d > 1000000) {
+            return Math.round(d / 1000000 * 10) / 10 + "M";
+          } else if (d > 1000) {
+            return Math.round(d / 1000 * 10) / 10 + "K";
+          } else {
+            return d;
+          }
+        }
+        var MAP_STATE = config.stateDataColumn;
+        var MAP_VALUE = config.valueDataColumn;
+        var width = WIDTH,
+        height = HEIGHT;
+        var valueById = d3.map();
+        var quantize = d3.scale.quantize()
+        .domain([0, 1.0])
+        .range(d3.range(COLOR_COUNTS).map(function(i) { return i }));
+        var path = d3.geo.path();
+        var map_svg = d3.select("#canvas-svg").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+        d3.tsv("https://s3-us-west-2.amazonaws.com/vida-public/geo/us-state-names.tsv", function(error, names) {
+          name_id_map = {};
+          id_name_map = {};
+    // console.log(names);
     
+    for (var i = 0; i < names.length; i++) {
+      name_id_map[names[i].name] = names[i].id;
+      id_name_map[names[i].id] = names[i].name;
+    }
+    
+    data.forEach(function(d) {
+      var id = name_id_map[d[MAP_STATE]];
+      valueById.set(id, +d[MAP_VALUE]); 
+    });
+    
+    quantize.domain([d3.min(data, function(d){ return +d[MAP_VALUE] }),
+      d3.max(data, function(d){ return +d[MAP_VALUE] })]);
+    var color = d3.scale.category20();
+    
+    d3.json("https://s3-us-west-2.amazonaws.com/vida-public/geo/us.json", function(error, us) {
+      map_svg.append("g")
+      .attr("class", "states-choropleth")
+      .selectAll("path")
+      .data(topojson.feature(us, us.objects.states).features)
+      .enter().append("path")
+      .attr("transform", "scale(" + SCALE + ")")
+      .style("fill", function(d) {
+        return color(d.id);
+      })
+      .attr("d", path)
+          .attr("id", function (d) { //console.log(d); 
+            return "statePath-" + id_name_map[d.id]; } )
+          .on("click", function(d) {
+            state = id_name_map[d.id];
+            displayState(state);
+          })
+          .on("dblclick",function(d){
+            //console.log("sad");
+            selectedStates = [];
+            svg.selectAll("path.line").remove();
+          });
+          map_svg.append("path")
+          .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+          .attr("class", "states")
+          .attr("transform", "scale(" + SCALE + ")")
+          .attr("d", path);
+      // d3.select("canvas-svg").select("svg").on("click", "You have clicked me!");
+    });
+    
+  });
+      });
+    </script>
   </body>
