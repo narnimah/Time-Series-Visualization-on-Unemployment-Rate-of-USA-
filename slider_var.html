@@ -82,7 +82,10 @@ stroke: #333;
 <body bgcolor="#E6E6FA">
 Rise%<input type='text' name='riseper' id='riseper' placeholder='00.00'><button onClick=pumpfunc()>rise</button>&nbsp;&nbsp;&nbsp;
 Drop%<input type='text' name='dropper' id='dropper' placeholder='00.00'><button onClick=dropfunc()>Drop</button><br>
-
+<center>
+        <div id="canvas-svg"></div>
+         <button onclick="location.href='//narnimah.github.io/time-series/two_sta_year.html';" id="myButton" class="float-left submit-button">Comparison of States</button> 
+    </center>
 <input type='checkbox' name='national' value='national' onchange=checktoggle(this)> National Unemployment Rate
 <input type='checkbox' name='select All' value='select' onchange=allstates(this)> Select All States</input>
 <div id="tooltip-container"></div>
