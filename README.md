@@ -3,6 +3,8 @@
 VISUALIZING TIME SERIES DATA
 Please click to watch the overview video : https://youtu.be/BEXvYDzjWes
 
+URL link : https://narnimah.github.io/Time-Series-Visualization-on-Unemployment-Rate-of-USA-/slider_var.html
+
 Abstract: Here we are using the unemployment rates among the different states in USA as an example to visualize time series data by extracting data from the Bureau of Labor and Statistics. Firstly I have plotted the graph of the USA map and made use of line graph at the bottom taking x axis as ‘unemployment rate in percentage’ and y axis as ‘years’. On hovering the mouse over the map, I have added a tool tip where the corresponding state names are displayed.
  On selecting a particular state in the map, below we see the unemployment line graph of the same being displayed. Here also a tool tip is been implemented, where hovering on the line graph displays which state it represents. The user can select one or more states, and can see the graph of the same being displayed. 
 Also I have made sure on hovering the mouse over a particular state in the graph, the line graph of other states are made invisible so that the user can see clearly what is the rise or drop for that state over the years. I have also implemented the slider function, where here the use can slide across horizontally and see how the graph fluctuates between the months in a year or between years.
